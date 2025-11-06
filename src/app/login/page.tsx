@@ -38,7 +38,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center" style={{ background: "var(--background)" }}>
       <div className="w-full max-w-md px-4">
-        <Card elevation={2}>
+        <Card variant="soft">
           <div className="flex flex-col">
             <div className="flex items-center gap-3">
               <span className="icon-circle icon-blue"><LogIn size={18} /></span>
