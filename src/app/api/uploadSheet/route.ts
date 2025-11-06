@@ -16,6 +16,11 @@ export async function POST(req: Request) {
 
     const formData = await req.formData();
     const file = formData.get("file");
+    const categoriaRaw = formData.get("categoria");
+    const categoria =
+      typeof categoriaRaw === "string" && categoriaRaw.trim()
+        ? categoriaRaw.trim()
+        : null;
     if (!(file instanceof File)) {
       return NextResponse.json(
         { error: "Arquivo não enviado", logs: [] },
@@ -32,6 +37,42 @@ export async function POST(req: Request) {
     const logs: string[] = [];
     let created = 0;
 
+    // garantir bucket de storage existente
+    const BUCKET = "audios";
+    try {
+      const buckets = await supabaseAdmin.storage.listBuckets();
+      const exists = Array.isArray(buckets.data)
+        ? buckets.data.some((b: any) => b.name === BUCKET)
+        : false;
+      if (!exists) {
+        const mk = await supabaseAdmin.storage.createBucket(BUCKET, {
+          public: true,
+          allowedMimeTypes: ["audio/mpeg"],
+        });
+        if (mk.error) {
+          logs.push(
+            `Erro ao criar bucket ${BUCKET}: ${mk.error.message}. Upload de áudio pode falhar.`
+          );
+        } else {
+          logs.push(`Bucket ${BUCKET} criado como público.`);
+        }
+      }
+    } catch (e: any) {
+      logs.push(
+        `Não foi possível verificar/criar bucket ${BUCKET}: ${e?.message ?? e}`
+      );
+    }
+
+    // cria um slug simples para usar como pasta de áudio e evitar colisões
+    const catSlug = categoria
+      ? categoria
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[^\w\s-]/g, "")
+          .replace(/\s+/g, "-")
+          .replace(/-+/g, "-")
+      : "lote";
+
     for (let i = 0; i < rows.length; i++) {
       const r = rows[i];
       const domanda_it = String(r.domanda_it ?? r["domanda_it"] ?? "").trim();
@@ -44,31 +85,36 @@ export async function POST(req: Request) {
         continue;
       }
 
-      const domandaFilename = `domanda_${i + 1}.mp3`;
-      const rispostaFilename = `risposta_${i + 1}.mp3`;
+      const domandaFilename = `${catSlug}/domanda_${i + 1}.mp3`;
+      const rispostaFilename = `${catSlug}/risposta_${i + 1}.mp3`;
 
-      // Verificar duplicatas no Storage
       const { data: existingDomanda } = await supabaseAdmin.storage
-        .from("audios")
+        .from(BUCKET)
         .download(domandaFilename);
       const { data: existingRisposta } = await supabaseAdmin.storage
-        .from("audios")
+        .from(BUCKET)
         .download(rispostaFilename);
 
       let domandaUrl: string | null = null;
       let rispostaUrl: string | null = null;
 
       if (!existingDomanda) {
-        const domandaMP3 = await synthesizeItalianMP3(domanda_it);
-        const up1 = await supabaseAdmin.storage
-          .from("audios")
-          .upload(domandaFilename, domandaMP3, {
-            contentType: "audio/mpeg",
-            upsert: false,
-          });
-        if (up1.error) {
+        try {
+          const domandaMP3 = await synthesizeItalianMP3(domanda_it);
+          const up1 = await supabaseAdmin.storage
+            .from(BUCKET)
+            .upload(domandaFilename, domandaMP3, {
+              contentType: "audio/mpeg",
+              upsert: false,
+            });
+          if (up1.error) {
+            logs.push(
+              `Erro ao enviar ${domandaFilename}: ${up1.error.message}. Pulando.`
+            );
+          }
+        } catch (e: any) {
           logs.push(
-            `Erro ao enviar ${domandaFilename}: ${up1.error.message}. Pulando.`
+            `TTS falhou para domanda (linha ${i + 1}): ${e?.message ?? e}. Registro será inserido sem áudio.`
           );
         }
       } else {
@@ -76,37 +122,44 @@ export async function POST(req: Request) {
       }
 
       if (!existingRisposta) {
-        const rispostaMP3 = await synthesizeItalianMP3(risposta_it);
-        const up2 = await supabaseAdmin.storage
-          .from("audios")
-          .upload(rispostaFilename, rispostaMP3, {
-            contentType: "audio/mpeg",
-            upsert: false,
-          });
-        if (up2.error) {
+        try {
+          const rispostaMP3 = await synthesizeItalianMP3(risposta_it);
+          const up2 = await supabaseAdmin.storage
+            .from(BUCKET)
+            .upload(rispostaFilename, rispostaMP3, {
+              contentType: "audio/mpeg",
+              upsert: false,
+            });
+          if (up2.error) {
+            logs.push(
+              `Erro ao enviar ${rispostaFilename}: ${up2.error.message}. Pulando.`
+            );
+          }
+        } catch (e: any) {
           logs.push(
-            `Erro ao enviar ${rispostaFilename}: ${up2.error.message}. Pulando.`
+            `TTS falhou para resposta (linha ${i + 1}): ${e?.message ?? e}. Registro será inserido sem áudio.`
           );
         }
       } else {
         logs.push(`Encontrado existente ${rispostaFilename}, não gerado novamente.`);
       }
 
+      // obter URLs públicas caso os uploads tenham acontecido
       const pubDomanda = supabaseAdmin.storage
-        .from("audios")
+        .from(BUCKET)
         .getPublicUrl(domandaFilename);
-      domandaUrl = pubDomanda.data.publicUrl;
+      domandaUrl = pubDomanda.data.publicUrl || null;
       const pubRisposta = supabaseAdmin.storage
-        .from("audios")
+        .from(BUCKET)
         .getPublicUrl(rispostaFilename);
-      rispostaUrl = pubRisposta.data.publicUrl;
+      rispostaUrl = pubRisposta.data.publicUrl || null;
 
-      // Evitar duplicatas na tabela
       const existing = await supabaseAdmin
         .from("entrevista")
         .select("id")
         .eq("domanda_it", domanda_it)
         .eq("risposta_it", risposta_it)
+        .eq("categoria", categoria)
         .limit(1)
         .maybeSingle();
 
@@ -120,6 +173,7 @@ export async function POST(req: Request) {
           domanda_pt,
           risposta_it,
           risposta_pt,
+          categoria,
           audio_domanda_url: domandaUrl,
           audio_risposta_url: rispostaUrl,
         });
@@ -130,7 +184,7 @@ export async function POST(req: Request) {
         } else {
           created++;
           logs.push(
-            `🎧 Gerado e salvo ${domandaFilename} / ${rispostaFilename}.`
+            `Registro inserido. Áudios: ${domandaUrl && rispostaUrl ? "OK" : "indisponíveis"}.`
           );
         }
       }

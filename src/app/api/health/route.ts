@@ -22,7 +22,6 @@ export async function GET() {
     return NextResponse.json(status, { status: 500 });
   }
 
-  // Check bucket existence by listing root
   try {
     const { data, error } = await supabaseAdmin.storage
       .from("audios")
@@ -38,7 +37,6 @@ export async function GET() {
     status.storage.error = e?.message ?? String(e);
   }
 
-  // Check table existence via head count
   try {
     const { error } = await supabaseAdmin
       .from("entrevista")
@@ -54,7 +52,6 @@ export async function GET() {
     status.db.error = e?.message ?? String(e);
   }
 
-  // Check client (anon) can read (RLS)
   try {
     const { error } = await supabase
       .from("entrevista")

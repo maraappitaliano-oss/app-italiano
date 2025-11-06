@@ -21,6 +21,7 @@ export type Entrevista = {
   domanda_pt: string;
   risposta_it: string;
   risposta_pt: string;
+  categoria: string | null;
   audio_domanda_url: string | null;
   audio_risposta_url: string | null;
   created_at: string;

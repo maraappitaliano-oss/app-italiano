@@ -2,6 +2,7 @@ type SynthesizeOptions = {
   voiceName?: string;
   speakingRate?: number;
   pitch?: number;
+  volumeGainDb?: number;
 };
 
 export async function synthesizeItalianMP3(
@@ -13,7 +14,11 @@ export async function synthesizeItalianMP3(
     throw new Error("GOOGLE_TTS_KEY não configurada no ambiente");
   }
 
-  const voiceName = opts.voiceName ?? "it-IT-Neural2-A";
+  // Defaults focados em melhor qualidade para italiano
+  const voiceName = opts.voiceName ?? "it-IT-Wavenet-C";
+  const speakingRate = opts.speakingRate ?? 0.95;
+  const pitch = opts.pitch ?? 2.0;
+  const volumeGainDb = opts.volumeGainDb ?? 1.5;
 
   const body = {
     input: { text },
@@ -23,8 +28,9 @@ export async function synthesizeItalianMP3(
     },
     audioConfig: {
       audioEncoding: "MP3",
-      speakingRate: opts.speakingRate ?? 1.0,
-      pitch: opts.pitch ?? 0,
+      speakingRate,
+      pitch,
+      volumeGainDb,
     },
   };
 
@@ -43,5 +49,6 @@ export async function synthesizeItalianMP3(
   }
   const data = (await res.json()) as { audioContent: string };
   const buf = Buffer.from(data.audioContent, "base64");
+  // Converter Buffer -> ArrayBuffer (slice para respeitar offset/length)
   return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
 }
