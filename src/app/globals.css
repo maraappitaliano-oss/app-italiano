@@ -1,13 +1,55 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F7F7F7; /* Branco Gelo */
+  --background: #FFFFFF; /* Fundo branco */
   --foreground: #0A1F44; /* Azul Marinho para textos principais */
   --color-green-italy: #1BAA70;
   --color-red-italy: #E44545;
-  --color-navy-italy: #0A1F44;
-  --color-ice-white: #F7F7F7;
+  --color-navy-italy: #0B2A4D; /* Azul navy atualizado */
+  --color-ice-white: #FFFFFF;
   --color-soft-gray: #D9D9D9;
+
+  /* Paleta Premium Azul (tons claros) */
+  --blue-50: #F5FAFF;
+  --blue-100: #EAF3FF;
+  --blue-200: #D9E9FF;
+  --blue-300: #C3DDFF;
+  --blue-400: #8CC2FF;
+  --blue-500: #5BA7FF; /* Primário céu */
+  --blue-600: #3F86E6;
+  --blue-700: #2F6BB7;
+  --blue-900: #0B2A4D; /* Navy */
+  --warm-white: #FAF7F2; /* Branco quente */
+  --primary: var(--blue-500);
+  --accent: var(--blue-300);
+  --surface: #FFFFFF;
+  --surface-alt: var(--blue-50);
+  --gray-50: #F7F7F7;
+  --gray-100: #EFEFEF;
+  --gray-200: #E5E5E5;
+  --gray-300: #DADADA;
+  --gray-600: #6B7280;
+  --gray-900: #0A1F44;
+  --text-muted: var(--gray-600);
+
+  /* Cores de apoio (para chips/ícones dos tiles) */
+  --purple-500: #7C5CFF;
+  --purple-100: #F0EFFF;
+  --yellow-500: #F4B740;
+  --yellow-100: #FFF7E8;
+  --green-500: #3CD4A0;
+  --green-100: #EAFBF5;
+  --orange-500: #FF7A45;
+  --orange-100: #FFF1EB;
+
+  /* Tipografia e layout */
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 10px;
+  --shadow-ios: 0 8px 24px rgba(10, 31, 68, 0.08);
+  --shadow-soft: 0 2px 8px rgba(10, 31, 68, 0.06);
+  --transition-fast: 150ms;
+  --transition-medium: 250ms;
 }
 
 @theme inline {
@@ -29,3 +71,148 @@ body {
   color: var(--foreground);
   font-family: var(--font-text), Arial, Helvetica, sans-serif;
 }
+
+/* Utilitários visuais */
+.card-ios {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--blue-100);
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.card-ios.card-clickable:hover {
+  box-shadow: var(--shadow-ios);
+}
+
+/* Variante soft para cartões/tiles inspirados no mockup */
+.card-soft {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--blue-100);
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.card-soft:hover { transform: translateY(-2px); box-shadow: var(--shadow-ios); }
+
+/* Tile utilitário para listas de ações/status */
+.tile {
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--blue-100);
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+.tile:hover { box-shadow: var(--shadow-ios); }
+
+/* Ícone em círculo (cores variantes) */
+.icon-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  width: 36px; height: 36px;
+  background: var(--blue-100);
+  color: var(--blue-700);
+}
+.icon-circle.sm { width: 28px; height: 28px; }
+.icon-circle.lg { width: 44px; height: 44px; }
+.icon-blue { background: var(--blue-100); color: var(--blue-700); }
+.icon-purple { background: var(--purple-100); color: var(--purple-500); }
+.icon-yellow { background: var(--yellow-100); color: var(--yellow-500); }
+.icon-green { background: var(--green-100); color: var(--green-500); }
+.icon-orange { background: var(--orange-100); color: var(--orange-500); }
+
+/* Status dot */
+.status-dot { width: 8px; height: 8px; border-radius: 9999px; display: inline-block; }
+.dot-success { background: var(--green-500); }
+.dot-warning { background: var(--yellow-500); }
+.dot-info { background: var(--blue-600); }
+.dot-neutral { background: var(--gray-300); }
+
+/* Tile sólido azul (como os cards azuis do mockup) */
+.tile-solid-blue {
+  border-radius: var(--radius-lg);
+  background: linear-gradient(160deg, var(--blue-500), var(--blue-700));
+  color: #fff;
+  box-shadow: var(--shadow-soft);
+}
+.tile-solid-blue:hover { box-shadow: var(--shadow-ios); }
+.tile-solid-blue .subtitle { color: rgba(255,255,255,0.85); }
+.tile-solid-blue .muted { color: rgba(255,255,255,0.7); }
+
+/* Tiles tintados (expande a cor suave para todo o card) */
+.tile-tinted-blue {
+  background: var(--blue-50);
+  border-color: var(--blue-100);
+}
+.tile-tinted-purple {
+  background: var(--purple-100);
+  border-color: #E3DEFF; /* borda suave próxima do purple-100 */
+}
+.tile-tinted-yellow {
+  background: var(--yellow-100);
+  border-color: #FFE7C4;
+}
+.tile-tinted-green {
+  background: var(--green-100);
+  border-color: #D7F5EB;
+}
+.tile-tinted-orange {
+  background: var(--orange-100);
+  border-color: #FFD8CB;
+}
+
+.tile-tinted-blue:hover,
+.tile-tinted-purple:hover,
+.tile-tinted-yellow:hover,
+.tile-tinted-green:hover,
+.tile-tinted-orange:hover {
+  box-shadow: var(--shadow-ios);
+}
+
+.btn-base {
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+
+.btn-primary {
+  background: linear-gradient(180deg, var(--blue-500), var(--blue-600));
+  color: #fff;
+}
+.btn-primary:hover { box-shadow: var(--shadow-soft); }
+.btn-primary:active { transform: scale(0.98); }
+
+.btn-outline {
+  background: #fff;
+  color: var(--gray-900);
+  border: 1px solid var(--gray-300);
+  border-radius: 9999px;
+}
+.btn-outline:hover { box-shadow: var(--shadow-soft); }
+.btn-outline:active { transform: scale(0.98); }
+
+.btn-ghost { background: transparent; color: var(--gray-900); }
+.btn-ghost:hover { background: var(--gray-50); }
+
+.btn-danger { background: var(--danger, #E53935); color: #fff; border-radius: 9999px; }
+.btn-danger:hover { box-shadow: var(--shadow-soft); }
+.btn-danger:active { transform: scale(0.98); }
+
+.btn-secondary {
+  background: #fff;
+  color: var(--gray-900);
+  border: 1px solid var(--gray-200);
+}
+.btn-secondary:hover { box-shadow: var(--shadow-soft); }
+.btn-secondary:active { transform: scale(0.98); }
+
+.input-ios {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gray-200);
+  background: #fff;
+  padding: 12px 14px;
+}
+.input-ios:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(91, 167, 255, 0.25); }
+
+.progress-track { height: 8px; border-radius: 9999px; background: var(--blue-100); }
+.progress-fill { height: 8px; border-radius: 9999px; background: var(--primary); }

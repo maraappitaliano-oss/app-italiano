@@ -1,5 +1,9 @@
 "use client";
 import React, { useState } from "react";
+import Card from "@/components/ui/Card";
+import Input from "@/components/ui/Input";
+import Button from "@/components/ui/Button";
+import { Volume2, Type, Play } from "lucide-react";
 
 export default function TtsTest() {
   const [text, setText] = useState("Ciao, questo è un test del TTS.");
@@ -30,35 +34,32 @@ export default function TtsTest() {
   }
 
   return (
-    <div className="mb-4 rounded-xl border bg-white p-4 shadow-md">
-      <h3 className="text-lg font-semibold">Teste de TTS (Google)</h3>
-      <p className="mt-1 text-sm text-zinc-700">
+    <Card variant="soft" header={<div className="flex items-center gap-2"><span className="icon-circle icon-blue"><Volume2 size={18} /></span><span className="font-semibold" style={{ color: "var(--blue-900)", fontFamily: "var(--font-title)" }}>Teste de TTS (Google)</span></div>}>
+      <p className="text-sm" style={{ color: "var(--text-muted)" }}>
         Digite um texto curto e gere áudio para validar a integração.
       </p>
-      <div className="mt-2 flex flex-col gap-2 md:flex-row md:items-end">
-        <label className="md:flex-1">
-          <span className="text-sm font-medium">Texto</span>
-          <input
-            className="mt-2 block w-full rounded-lg border p-2"
+      <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+        <div className="md:col-span-2">
+          <Input
+            label="Texto"
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Escreva um texto curto em italiano"
+            leftIcon={<span className="icon-circle sm icon-purple"><Type size={16} /></span>}
           />
-        </label>
-        <button
-          onClick={runTest}
-          disabled={loading || !text.trim()}
-          className="rounded-lg bg-blue-600 px-3 py-2 text-white disabled:opacity-50"
-        >
-          {loading ? "Gerando..." : "Testar TTS"}
-        </button>
+        </div>
+        <div>
+          <Button onClick={runTest} disabled={loading || !text.trim()} leadingIcon={<span className="icon-circle sm icon-blue"><Play size={16} /></span>}>
+            {loading ? "Gerando..." : "Testar TTS"}
+          </Button>
+        </div>
       </div>
       {error && (
-        <p className="mt-2 text-sm text-red-600">Erro: {error}</p>
+        <p className="mt-2 text-sm" style={{ color: "var(--danger, #E53935)" }}>Erro: {error}</p>
       )}
       {audioSrc && (
         <audio className="mt-3 w-full" controls src={audioSrc} />
       )}
-    </div>
+    </Card>
   );
 }

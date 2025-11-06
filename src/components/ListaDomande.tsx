@@ -1,7 +1,9 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Play, Edit, Trash2 } from "lucide-react";
+import { Play, Edit, Trash2, MessageSquare, Layers, Edit3 } from "lucide-react";
 import { supabase, type Entrevista } from "@/lib/supabaseClient";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 
 type Props = {
   reloadSignal?: number;
@@ -100,15 +102,22 @@ export default function ListaDomande({ reloadSignal }: Props) {
 
   return (
     <div className="mt-8 w-full max-w-3xl">
-      <h2 className="mb-2 text-xl font-semibold" style={{ color: "var(--color-navy-italy)", fontFamily: "var(--font-title)" }}>Frases</h2>
-      <div className="mb-4 flex flex-col gap-2 rounded-xl border p-3 shadow-md" style={{ background: "#fff", borderColor: "var(--color-soft-gray)" }}>
+      <h2 className="mb-2 text-xl font-semibold flex items-center gap-2" style={{ color: "var(--blue-900)", fontFamily: "var(--font-title)" }}>
+        <span className="icon-circle icon-blue"><MessageSquare size={18} /></span>
+        Frases
+      </h2>
+      <Card
+        variant="soft"
+        className="mb-4"
+        header={<div className="flex items-center gap-2"><span className="icon-circle icon-purple"><Layers size={18} /></span><span className="font-semibold" style={{ color: "var(--blue-900)", fontFamily: "var(--font-title)" }}>Filtrar</span></div>}
+      >
         <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
           <label className="block">
             <span className="text-sm font-medium">Filtrar por categoria</span>
             <select
               value={filterCategoria}
               onChange={(e) => setFilterCategoria(e.target.value)}
-              className="mt-2 block w-full rounded-lg border p-2 text-sm"
+              className="mt-2 block w-full input-ios text-sm"
             >
               <option value="">Todas</option>
               {categories.map((c) => (
@@ -118,27 +127,29 @@ export default function ListaDomande({ reloadSignal }: Props) {
               ))}
             </select>
           </label>
-          <button
-            onClick={() => {
-              setFilterCategoria("");
-              load();
-            }}
-            className="mt-2 rounded-lg px-3 py-2 md:mt-8 text-sm"
-            style={{ backgroundColor: "var(--color-soft-gray)", color: "#0a0a0a" }}
+          <Button
+            variant="outline"
+            className="mt-2 md:mt-8"
+            onClick={() => { setFilterCategoria(""); load(); }}
           >
             Limpar filtro
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
       {loading && (
-        <p className="text-sm text-zinc-600">Carregando registros...</p>
+        <p className="text-sm" style={{ color: "var(--text-muted)" }}>Carregando registros...</p>
       )}
       <div className="flex flex-col gap-4">
         {items.map((item) => (
-          <div
+          <Card
             key={item.id}
-            className="rounded-xl p-3 shadow-md border"
-            style={{ background: "#fff", borderColor: "var(--color-soft-gray)" }}
+            variant="soft"
+            className="tile-tinted-blue"
+            header={editingId === item.id ? (
+              <div className="flex items-center gap-2"><span className="icon-circle icon-yellow"><Edit3 size={18} /></span><span className="font-semibold" style={{ color: "var(--blue-900)", fontFamily: "var(--font-title)" }}>Editar frase</span></div>
+            ) : (
+              <div className="flex items-center gap-2"><span className="icon-circle icon-blue"><MessageSquare size={18} /></span><span className="font-semibold" style={{ color: "var(--blue-900)", fontFamily: "var(--font-title)" }}>Frase</span></div>
+            )}
           >
             {editingId === item.id ? (
               <div className="flex flex-col gap-2">
@@ -146,7 +157,7 @@ export default function ListaDomande({ reloadSignal }: Props) {
                   <label className="block">
                     <span className="text-xs">Domanda (IT)</span>
                     <input
-                      className="mt-1 w-full rounded-lg border p-2 text-sm"
+                      className="mt-1 w-full input-ios text-sm"
                       value={editForm.domanda_it ?? ""}
                       onChange={(e) =>
                         setEditForm({ ...editForm, domanda_it: e.target.value })
@@ -156,7 +167,7 @@ export default function ListaDomande({ reloadSignal }: Props) {
                   <label className="block">
                     <span className="text-xs">Domanda (PT)</span>
                     <input
-                      className="mt-1 w-full rounded-lg border p-2 text-sm"
+                      className="mt-1 w-full input-ios text-sm"
                       value={editForm.domanda_pt ?? ""}
                       onChange={(e) =>
                         setEditForm({ ...editForm, domanda_pt: e.target.value })
@@ -166,7 +177,7 @@ export default function ListaDomande({ reloadSignal }: Props) {
                   <label className="block">
                     <span className="text-xs">Risposta (IT)</span>
                     <input
-                      className="mt-1 w-full rounded-lg border p-2 text-sm"
+                      className="mt-1 w-full input-ios text-sm"
                       value={editForm.risposta_it ?? ""}
                       onChange={(e) =>
                         setEditForm({ ...editForm, risposta_it: e.target.value })
@@ -176,7 +187,7 @@ export default function ListaDomande({ reloadSignal }: Props) {
                   <label className="block">
                     <span className="text-xs">Risposta (PT)</span>
                     <input
-                      className="mt-1 w-full rounded-lg border p-2 text-sm"
+                      className="mt-1 w-full input-ios text-sm"
                       value={editForm.risposta_pt ?? ""}
                       onChange={(e) =>
                         setEditForm({ ...editForm, risposta_pt: e.target.value })
@@ -186,7 +197,7 @@ export default function ListaDomande({ reloadSignal }: Props) {
                   <label className="block">
                     <span className="text-xs">Título/Categoria</span>
                     <input
-                      className="mt-1 w-full rounded-lg border p-2 text-sm"
+                      className="mt-1 w-full input-ios text-sm"
                       value={(editForm as any).categoria ?? ""}
                       onChange={(e) =>
                         setEditForm({ ...editForm, categoria: e.target.value } as any)
@@ -217,12 +228,12 @@ export default function ListaDomande({ reloadSignal }: Props) {
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex flex-col">
                     {item.categoria && (
-                      <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[10px] text-zinc-700 w-fit">
+                      <span className="rounded-full px-2 py-0.5 text-[10px] w-fit" style={{ backgroundColor: "#f5f5f5", color: "var(--blue-900)" }}>
                         {item.categoria}
                       </span>
                     )}
-                    <p className="text-sm text-zinc-900">{item.domanda_it}</p>
-                    <p className="text-sm text-zinc-700">{item.risposta_it}</p>
+                    <p className="text-sm" style={{ color: "var(--blue-900)" }}>{item.domanda_it}</p>
+                    <p className="text-sm" style={{ color: "var(--text-muted)" }}>{item.risposta_it}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     {item.audio_domanda_url && (
@@ -230,8 +241,8 @@ export default function ListaDomande({ reloadSignal }: Props) {
                         aria-label="Ouvir pergunta"
                         title="Ouvir pergunta"
                         onClick={() => play(item.audio_domanda_url!, item.id)}
-                        className={`h-8 w-8 rounded-full flex items-center justify-center border`} 
-                        style={{ borderColor: "var(--color-soft-gray)", backgroundColor: playingId === item.id ? "var(--color-green-italy)" : "#fff", color: playingId === item.id ? "#fff" : "#0a0a0a" }}
+                        className={`icon-circle sm ${playingId === item.id ? "icon-blue" : ""}`} 
+                        style={{ borderColor: "var(--gray-300)", backgroundColor: playingId === item.id ? "var(--blue-600)" : "#fff", color: playingId === item.id ? "#fff" : "var(--blue-900)" }}
                       >
                         <Play size={18} />
                       </button>
@@ -241,8 +252,8 @@ export default function ListaDomande({ reloadSignal }: Props) {
                         aria-label="Ouvir resposta"
                         title="Ouvir resposta"
                         onClick={() => play(item.audio_risposta_url!, item.id)}
-                        className={`h-8 w-8 rounded-full flex items-center justify-center border`}
-                        style={{ borderColor: "var(--color-soft-gray)", backgroundColor: playingId === item.id ? "var(--color-green-italy)" : "#fff", color: playingId === item.id ? "#fff" : "#0a0a0a" }}
+                        className={`icon-circle sm ${playingId === item.id ? "icon-blue" : ""}`}
+                        style={{ borderColor: "var(--gray-300)", backgroundColor: playingId === item.id ? "var(--blue-600)" : "#fff", color: playingId === item.id ? "#fff" : "var(--blue-900)" }}
                       >
                         <Play size={18} />
                       </button>
@@ -251,8 +262,8 @@ export default function ListaDomande({ reloadSignal }: Props) {
                       aria-label="Editar"
                       title="Editar"
                       onClick={() => startEdit(item)}
-                      className="h-8 w-8 rounded-full flex items-center justify-center border"
-                      style={{ borderColor: "var(--color-soft-gray)", backgroundColor: "#fff", color: "var(--color-navy-italy)" }}
+                      className="icon-circle sm"
+                      style={{ borderColor: "var(--gray-300)", backgroundColor: "#fff", color: "var(--blue-900)" }}
                     >
                       <Edit size={18} />
                     </button>
@@ -260,8 +271,8 @@ export default function ListaDomande({ reloadSignal }: Props) {
                       aria-label="Excluir"
                       title="Excluir"
                       onClick={() => remove(item.id)}
-                      className="h-8 w-8 rounded-full flex items-center justify-center border"
-                      style={{ borderColor: "var(--color-soft-gray)", backgroundColor: "#fff", color: "var(--color-red-italy)" }}
+                      className="icon-circle sm"
+                      style={{ borderColor: "var(--gray-300)", backgroundColor: "#fff", color: "var(--danger, #E53935)" }}
                     >
                       <Trash2 size={18} />
                     </button>
@@ -269,10 +280,10 @@ export default function ListaDomande({ reloadSignal }: Props) {
                 </div>
               </div>
             )}
-          </div>
+          </Card>
         ))}
         {!loading && items.length === 0 && (
-          <p className="text-sm text-zinc-600">Nenhum registro encontrado.</p>
+          <p className="text-sm" style={{ color: "var(--text-muted)" }}>Nenhum registro encontrado.</p>
         )}
       </div>
     </div>

@@ -12,8 +12,8 @@ export default function Home() {
     })();
   }, [router]);
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ background: "var(--color-ice-white)" }}>
-      <p className="text-sm" style={{ color: "var(--color-navy-italy)" }}>Carregando...</p>
+    <div className="flex min-h-screen items-center justify-center" style={{ background: "var(--background)" }}>
+      <p className="text-sm" style={{ color: "var(--blue-700)" }}>Carregando...</p>
     </div>
   );
 }

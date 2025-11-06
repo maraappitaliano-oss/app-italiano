@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSession, getUserRole, signOut, type UserRole } from "@/lib/auth";
@@ -13,6 +13,9 @@ import {
   BookOpen,
   Zap,
 } from "lucide-react";
+import DashboardOverview from "@/components/DashboardOverview";
+import Card from "@/components/ui/Card";
+import Button from "@/components/ui/Button";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -34,134 +37,107 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center" style={{ background: "var(--color-ice-white)" }}>
-        <p className="text-sm" style={{ color: "var(--color-navy-italy)" }}>Carregando...</p>
+      <div className="flex min-h-screen items-center justify-center" style={{ background: "var(--background)" }}>
+        <p className="text-sm" style={{ color: "var(--blue-700)" }}>Carregando...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-start justify-center" style={{ background: "var(--color-ice-white)" }}>
+    <div className="flex min-h-screen items-start justify-center" style={{ background: "var(--background)" }}>
       <main className="flex w-full max-w-4xl flex-col items-start gap-6 py-16 px-6">
         <div className="flex w-full items-center justify-between">
-          <h1 className="text-3xl font-bold" style={{ color: "var(--color-navy-italy)", fontFamily: "var(--font-title)" }}>Dashboard</h1>
-          <button
+          <h1 className="text-3xl font-bold" style={{ color: "var(--blue-900)", fontFamily: "var(--font-title)" }}>Dashboard</h1>
+          <Button
             onClick={async () => { await signOut(); router.replace("/login"); }}
-            className="rounded-lg px-3 py-2 text-white"
-            style={{ backgroundColor: "var(--color-red-italy)" }}
+            variant="outline"
             title="Sair"
+            leadingIcon={<span className="icon-circle sm icon-blue"><LogOut size={16} /></span>}
           >
-            <LogOut size={18} />
-          </button>
+            Sair
+          </Button>
         </div>
 
+        {/* Overview com progresso e cards principais */}
+        <DashboardOverview />
+
+        {/* Ferramentas e modos existentes */}
+        <h2 className="mt-8 text-lg font-semibold" style={{ color: "var(--blue-900)", fontFamily: "var(--font-title)" }}>Outros modos</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
           {/* Pronúncia */}
-          <div
-            className="rounded-xl border p-4 shadow cursor-pointer"
-            style={{ background: "#fff", borderColor: "var(--color-soft-gray)" }}
-            onClick={() => router.push("/modos/pronuncia")}
-          >
-            <div className="flex items-center gap-2">
-              <Mic size={20} color={"var(--color-green-italy)"} />
-              <h3 className="text-lg font-semibold" style={{ color: "var(--color-navy-italy)", fontFamily: "var(--font-title)" }}>Pronúncia (Escutar e Repetir)</h3>
+          <Card clickable variant="soft" className="tile-tinted-blue" onClick={() => router.push("/modos/pronuncia")}>
+            <div className="flex items-center gap-3">
+              <span className="icon-circle icon-blue"><Mic size={18} /></span>
+              <h3 className="text-lg font-semibold" style={{ color: "var(--blue-900)", fontFamily: "var(--font-title)" }}>Pronúncia (Escutar e Repetir)</h3>
             </div>
-            <p className="mt-1 text-sm" style={{ color: "#333" }}>Falar italiano corretamente.</p>
-          </div>
+            <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>Falar italiano corretamente.</p>
+          </Card>
 
           {/* Flashcards */}
-          <div
-            className="rounded-xl border p-4 shadow cursor-pointer"
-            style={{ background: "#fff", borderColor: "var(--color-soft-gray)" }}
-            onClick={() => router.push("/modos/flashcards")}
-          >
-            <div className="flex items-center gap-2">
-              <Layers size={20} color={"var(--color-navy-italy)"} />
-              <h3 className="text-lg font-semibold" style={{ color: "var(--color-navy-italy)", fontFamily: "var(--font-title)" }}>Flashcards (SRS)</h3>
+          <Card clickable variant="soft" className="tile-tinted-purple" onClick={() => router.push("/modos/flashcards")}>
+            <div className="flex items-center gap-3">
+              <span className="icon-circle icon-purple"><Layers size={18} /></span>
+              <h3 className="text-lg font-semibold" style={{ color: "var(--blue-900)", fontFamily: "var(--font-title)" }}>Flashcards (SRS)</h3>
             </div>
-            <p className="mt-1 text-sm" style={{ color: "#333" }}>Memorizar vocabulário e frases.</p>
-          </div>
+            <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>Memorizar vocabulário e frases.</p>
+          </Card>
 
           {/* Fala (Prática) */}
-          <div
-            className="rounded-xl border p-4 shadow cursor-pointer"
-            style={{ background: "#fff", borderColor: "var(--color-soft-gray)" }}
-            onClick={() => router.push("/fala")}
-          >
-            <div className="flex items-center gap-2">
-              <FileAudio size={20} color={"var(--color-navy-italy)"} />
-              <h3 className="text-lg font-semibold" style={{ color: "var(--color-navy-italy)", fontFamily: "var(--font-title)" }}>Fala (Prática)</h3>
+          <Card clickable variant="soft" className="tile-tinted-green" onClick={() => router.push("/fala")}>
+            <div className="flex items-center gap-3">
+              <span className="icon-circle icon-green"><FileAudio size={18} /></span>
+              <h3 className="text-lg font-semibold" style={{ color: "var(--blue-900)", fontFamily: "var(--font-title)" }}>Fala (Prática)</h3>
             </div>
-            <p className="mt-1 text-sm" style={{ color: "#333" }}>Treinar o consulado italiano.</p>
-          </div>
+            <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>Treinar o consulado italiano.</p>
+          </Card>
 
           {/* Ditado */}
-          <div
-            className="rounded-xl border p-4 shadow cursor-pointer"
-            style={{ background: "#fff", borderColor: "var(--color-soft-gray)" }}
-            onClick={() => router.push("/modos/ditado")}
-          >
-            <div className="flex items-center gap-2">
-              <Keyboard size={20} color={"var(--color-navy-italy)"} />
-              <h3 className="text-lg font-semibold" style={{ color: "var(--color-navy-italy)", fontFamily: "var(--font-title)" }}>Ditado (Escrita)</h3>
+          <Card clickable variant="soft" className="tile-tinted-yellow" onClick={() => router.push("/modos/ditado")}>
+            <div className="flex items-center gap-3">
+              <span className="icon-circle icon-yellow"><Keyboard size={18} /></span>
+              <h3 className="text-lg font-semibold" style={{ color: "var(--blue-900)", fontFamily: "var(--font-title)" }}>Ditado (Escrita)</h3>
             </div>
-            <p className="mt-1 text-sm" style={{ color: "#333" }}>Compreensão auditiva e ortografia.</p>
-          </div>
+            <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>Compreensão auditiva e ortografia.</p>
+          </Card>
 
           {/* Histórias / Diálogos */}
-          <div
-            className="rounded-xl border p-4 shadow cursor-pointer"
-            style={{ background: "#fff", borderColor: "var(--color-soft-gray)" }}
-            onClick={() => router.push("/modos/historias")}
-          >
-            <div className="flex items-center gap-2">
-              <BookOpen size={20} color={"var(--color-navy-italy)"} />
-              <h3 className="text-lg font-semibold" style={{ color: "var(--color-navy-italy)", fontFamily: "var(--font-title)" }}>Histórias / Diálogos</h3>
+          <Card clickable variant="soft" className="tile-tinted-orange" onClick={() => router.push("/modos/historias")}>
+            <div className="flex items-center gap-3">
+              <span className="icon-circle icon-orange"><BookOpen size={18} /></span>
+              <h3 className="text-lg font-semibold" style={{ color: "var(--blue-900)", fontFamily: "var(--font-title)" }}>Histórias / Diálogos</h3>
             </div>
-            <p className="mt-1 text-sm" style={{ color: "#333" }}>Aprender em contexto real.</p>
-          </div>
+            <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>Aprender em contexto real.</p>
+          </Card>
 
           {/* Prática Rápida */}
-          <div
-            className="rounded-xl border p-4 shadow cursor-pointer"
-            style={{ background: "#fff", borderColor: "var(--color-soft-gray)" }}
-            onClick={() => router.push("/modos/pratica")}
-          >
-            <div className="flex items-center gap-2">
-              <Zap size={20} color={"var(--color-green-italy)"} />
-              <h3 className="text-lg font-semibold" style={{ color: "var(--color-navy-italy)", fontFamily: "var(--font-title)" }}>Prática Rápida (5 minutos)</h3>
+          <Card clickable variant="soft" className="tile-tinted-blue" onClick={() => router.push("/modos/pratica")}>
+            <div className="flex items-center gap-3">
+              <span className="icon-circle icon-blue"><Zap size={18} /></span>
+              <h3 className="text-lg font-semibold" style={{ color: "var(--blue-900)", fontFamily: "var(--font-title)" }}>Prática Rápida (5 minutos)</h3>
             </div>
-            <p className="mt-1 text-sm" style={{ color: "#333" }}>Estudar diariamente de forma leve.</p>
-          </div>
+            <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>Estudar diariamente de forma leve.</p>
+          </Card>
 
           {/* Usuários - Admin */}
           {role === "admin" && (
-            <div
-              className="rounded-xl border p-4 shadow cursor-pointer"
-              style={{ background: "#fff", borderColor: "var(--color-soft-gray)" }}
-              onClick={() => router.push("/users")}
-            >
-              <div className="flex items-center gap-2">
-                <Users size={20} color={"var(--color-navy-italy)"} />
-                <h3 className="text-lg font-semibold" style={{ color: "var(--color-navy-italy)", fontFamily: "var(--font-title)" }}>Usuários</h3>
+            <Card clickable className="tile-solid-blue" onClick={() => router.push("/users")}>
+              <div className="flex items-center gap-3">
+                <span className="icon-circle" style={{ backgroundColor: "rgba(255,255,255,0.18)", color: "#fff" }}><Users size={18} /></span>
+                <h3 className="text-lg font-semibold" style={{ color: "#fff", fontFamily: "var(--font-title)" }}>Usuários</h3>
               </div>
-              <p className="mt-1 text-sm" style={{ color: "#333" }}>Criar e gerenciar contas e papéis.</p>
-            </div>
+              <p className="mt-1 text-sm" style={{ color: "#fff" }}>Criar e gerenciar contas e papéis.</p>
+            </Card>
           )}
 
           {/* Upload de Áudios - por último */}
           {(role === "admin" || role === "editor") && (
-            <div
-              className="rounded-xl border p-4 shadow cursor-pointer"
-              style={{ background: "#fff", borderColor: "var(--color-soft-gray)" }}
-              onClick={() => router.push("/upload")}
-            >
-              <div className="flex items-center gap-2">
-                <Upload size={20} color={"var(--color-green-italy)"} />
-                <h3 className="text-lg font-semibold" style={{ color: "var(--color-navy-italy)", fontFamily: "var(--font-title)" }}>Upload de Áudios</h3>
+            <Card clickable className="tile-solid-blue" onClick={() => router.push("/upload")}>
+              <div className="flex items-center gap-3">
+                <span className="icon-circle" style={{ backgroundColor: "rgba(255,255,255,0.18)", color: "#fff" }}><Upload size={18} /></span>
+                <h3 className="text-lg font-semibold" style={{ color: "#fff", fontFamily: "var(--font-title)" }}>Upload de Áudios</h3>
               </div>
-              <p className="mt-1 text-sm" style={{ color: "#333" }}>Subir áudios (somente admin/editor).</p>
-            </div>
+              <p className="mt-1 text-sm" style={{ color: "#fff" }}>Subir áudios (somente admin/editor).</p>
+            </Card>
           )}
         </div>
       </main>
