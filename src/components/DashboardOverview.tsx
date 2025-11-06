@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import CircularProgress from "./CircularProgress";
-import { BookOpen, MessageSquare, Edit3, RefreshCw } from "lucide-react";
+import { BookOpen, MessageSquare, Edit3, RefreshCw, Mic, Layers, FileAudio, Keyboard, Zap } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function DashboardOverview() {
@@ -144,6 +144,85 @@ export default function DashboardOverview() {
               <span className="status-dot dot-neutral" />
               ›
             </span>
+          </button>
+          {/* Outros Modos integrados */}
+          <button
+            className="tile tile-tinted-blue flex items-center justify-between p-4"
+            onClick={() => router.push("/modos/pronuncia")}
+          >
+            <div className="flex items-center gap-3">
+              <span className="icon-circle icon-blue"><Mic size={18} /></span>
+              <div className="text-left">
+                <p className="font-semibold" style={{ color: "var(--color-navy-italy)" }}>Pronúncia (Escutar e Repetir)</p>
+                <p className="text-sm" style={{ color: "#4b5563" }}>Falar italiano corretamente.</p>
+              </div>
+            </div>
+            <span className="inline-flex items-center gap-2 text-sm" style={{ color: "#9ca3af" }}>›</span>
+          </button>
+          <button
+            className="tile tile-tinted-purple flex items-center justify-between p-4"
+            onClick={() => router.push("/modos/flashcards")}
+          >
+            <div className="flex items-center gap-3">
+              <span className="icon-circle icon-purple"><Layers size={18} /></span>
+              <div className="text-left">
+                <p className="font-semibold" style={{ color: "var(--color-navy-italy)" }}>Flashcards (SRS)</p>
+                <p className="text-sm" style={{ color: "#4b5563" }}>Memorizar vocabulário e frases.</p>
+              </div>
+            </div>
+            <span className="inline-flex items-center gap-2 text-sm" style={{ color: "#9ca3af" }}>›</span>
+          </button>
+          <button
+            className="tile tile-tinted-green flex items-center justify-between p-4"
+            onClick={() => router.push("/fala")}
+          >
+            <div className="flex items-center gap-3">
+              <span className="icon-circle icon-green"><FileAudio size={18} /></span>
+              <div className="text-left">
+                <p className="font-semibold" style={{ color: "var(--color-navy-italy)" }}>Fala (Prática)</p>
+                <p className="text-sm" style={{ color: "#4b5563" }}>Treinar o consulado italiano.</p>
+              </div>
+            </div>
+            <span className="inline-flex items-center gap-2 text-sm" style={{ color: "#9ca3af" }}>›</span>
+          </button>
+          <button
+            className="tile tile-tinted-yellow flex items-center justify-between p-4"
+            onClick={() => router.push("/modos/ditado")}
+          >
+            <div className="flex items-center gap-3">
+              <span className="icon-circle icon-yellow"><Keyboard size={18} /></span>
+              <div className="text-left">
+                <p className="font-semibold" style={{ color: "var(--color-navy-italy)" }}>Ditado (Escrita)</p>
+                <p className="text-sm" style={{ color: "#4b5563" }}>Compreensão auditiva e ortografia.</p>
+              </div>
+            </div>
+            <span className="inline-flex items-center gap-2 text-sm" style={{ color: "#9ca3af" }}>›</span>
+          </button>
+          <button
+            className="tile tile-tinted-orange flex items-center justify-between p-4"
+            onClick={() => router.push("/modos/historias")}
+          >
+            <div className="flex items-center gap-3">
+              <span className="icon-circle icon-orange"><BookOpen size={18} /></span>
+              <div className="text-left">
+                <p className="font-semibold" style={{ color: "var(--color-navy-italy)" }}>Histórias / Diálogos</p>
+                <p className="text-sm" style={{ color: "#4b5563" }}>Aprender em contexto real.</p>
+              </div>
+            </div>
+            <span className="inline-flex items-center gap-2 text-sm" style={{ color: "#9ca3af" }}>›</span>
+          </button>
+          <button
+            className="tile tile-tinted-blue flex items-center justify-between p-4"
+            onClick={() => router.push("/modos/pratica")}
+          >
+            <div className="flex items-center gap-3">
+              <span className="icon-circle icon-blue"><Zap size={18} /></span>
+              <div className="text-left">
+                <p className="font-semibold" style={{ color: "var(--color-navy-italy)" }}>Prática Rápida (5 minutos)</p>
+                <p className="text-sm" style={{ color: "#4b5563" }}>Estudar diariamente de forma leve.</p>
+              </div>
+            </div>
+            <span className="inline-flex items-center gap-2 text-sm" style={{ color: "#9ca3af" }}>›</span>
           </button>
         </div>
       </div>
