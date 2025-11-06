@@ -23,12 +23,15 @@ export async function GET() {
   const ws = XLSX.utils.aoa_to_sheet(data);
   XLSX.utils.book_append_sheet(wb, ws, "modelo");
 
-  const buf: Buffer = XLSX.write(wb, { bookType: "xlsx", type: "buffer" });
+  // Use ArrayBuffer/Blob em vez de Buffer para compatibilidade com Web Response
+  const ab = XLSX.write(wb, { bookType: "xlsx", type: "array" }) as ArrayBuffer;
+  const blob = new Blob([ab], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
 
-  return new Response(buf, {
+  return new Response(blob, {
     headers: {
-      "Content-Type":
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "Content-Disposition": "attachment; filename=modelo.xlsx",
       "Cache-Control": "no-store",
     },
