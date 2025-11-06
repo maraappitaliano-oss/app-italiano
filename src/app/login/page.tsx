@@ -38,32 +38,41 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center" style={{ background: "var(--background)" }}>
       <div className="w-full max-w-md px-4">
-        <Card variant="soft">
+        <Card variant="soft" className="tile-tinted-blue" header={(
+          <div className="flex items-center gap-3">
+            <span className="icon-circle icon-blue"><LogIn size={18} /></span>
+            <h1 className="text-2xl font-semibold" style={{ color: "var(--blue-900)", fontFamily: "var(--font-title)" }}>Entrar</h1>
+          </div>
+        )}>
           <div className="flex flex-col">
-            <div className="flex items-center gap-3">
-              <span className="icon-circle icon-blue"><LogIn size={18} /></span>
-              <h1 className="text-2xl font-semibold" style={{ color: "var(--blue-900)", fontFamily: "var(--font-title)" }}>Entrar</h1>
-            </div>
             <p className="mt-1 text-sm" style={{ color: "var(--text-muted)" }}>Use seu e-mail e senha para acessar.</p>
             <form className="mt-4 flex flex-col gap-3" onSubmit={onSubmit}>
-              <Input
-                label="E-mail"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="voce@exemplo.com"
-                leftIcon={<span className="icon-circle sm icon-blue"><Mail size={16} /></span>}
-                required
-              />
-              <Input
-                label="Senha"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                leftIcon={<span className="icon-circle sm icon-yellow"><Lock size={16} /></span>}
-                required
-              />
+              <div>
+                <div className="mb-1 flex items-center gap-2">
+                  <span className="icon-circle sm icon-blue"><Mail size={16} /></span>
+                  <label className="text-sm font-medium" style={{ color: "var(--gray-900)", fontFamily: "var(--font-title)" }}>E-mail</label>
+                </div>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="voce@exemplo.com"
+                  required
+                />
+              </div>
+              <div>
+                <div className="mb-1 flex items-center gap-2">
+                  <span className="icon-circle sm icon-yellow"><Lock size={16} /></span>
+                  <label className="text-sm font-medium" style={{ color: "var(--gray-900)", fontFamily: "var(--font-title)" }}>Senha</label>
+                </div>
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
               {error && (
                 <p className="text-sm" style={{ color: "var(--danger, #E53935)" }}>Erro: {error}</p>
               )}
