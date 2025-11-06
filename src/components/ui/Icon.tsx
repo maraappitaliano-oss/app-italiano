@@ -2,7 +2,7 @@
 import React from "react";
 
 type Props = {
-  children: React.ReactElement;
+  children: React.ReactElement<any>;
   size?: number;
   color?: string;
 };
